@@ -50,12 +50,26 @@
     </div>
 
     <script>
-        let money = 0;
+
+        let money = localStorage.getItem('money');
+        // If it doesn't exist, initialize it to 0
+        if (money === null) {
+            money = 0;
+        } else {
+            // If it exists, convert it to a number
+            money = parseInt(money);
+        }
+        // Update the displayed money value
+        document.getElementById('moneyValue').textContent = money;
 
         function increaseMoney() {
             money++;
+            // Update the displayed money value
             document.getElementById('moneyValue').textContent = money;
+            // Store the updated money value in localStorage
+            localStorage.setItem('money', money);
         }
     </script>
 </body>
+
 </html>
