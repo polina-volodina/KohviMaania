@@ -45,12 +45,12 @@
 </head>
 <body>
     <div class="container">
+        <img src="images/Coffee.png" alt="Description of the image">
         <button class="button" onclick="increaseMoney()">Click Me</button>
         <div id="money">Money: <span id="moneyValue">0</span></div>
     </div>
 
     <script>
-
         let money = localStorage.getItem('money');
         // If it doesn't exist, initialize it to 0
         if (money === null) {
