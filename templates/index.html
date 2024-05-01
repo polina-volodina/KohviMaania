@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kohvimaania</title>
+    <style>
+        body {
+            background-color: #FFC0CB; /* Rose color */
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Make the body full height */
+        }
+        .container {
+            width: calc(100% - 2cm); /* Width of the container */
+            height: calc(100% - 2cm); /* Height of the container */
+            border: 3mm solid #FFFFFF; /* White border with 3mm width */
+            box-sizing: border-box; /* Include border in width and height calculations */
+            padding: 1cm; /* Padding inside the container */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .button {
+            background-color: #FFFFFF; /* White color */
+            color: black; /* Text color */
+            padding: 15px 20px; /* Padding around the button text */
+            border: none; /* Remove border */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Change cursor on hover */
+            position: absolute;
+            bottom: 80px;
+        }
+        .button:active {
+            background-color: #ffd5dc; /* Gray color when button is clicked */
+        }
+        #money {
+            position: absolute;
+            top: 60px;
+            right: 65px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="button" onclick="increaseMoney()">Click Me</button>
+        <div id="money">Money: <span id="moneyValue">0</span></div>
+    </div>
+
+    <script>
+        let money = 0;
+
+        function increaseMoney() {
+            money++;
+            document.getElementById('moneyValue').textContent = money;
+        }
+    </script>
+</body>
+</html>
