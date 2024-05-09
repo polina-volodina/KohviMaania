@@ -45,7 +45,7 @@
 </head>
 <body>
     <div class="container">
-        <img src="images/Coffee.jpg">
+        <img src="images/coffee.jpg">
         <button class="button" onclick="increaseMoney()">Click Me</button>
         <div id="money">Money: <span id="moneyValue">0</span></div>
     </div>
@@ -53,7 +53,7 @@
     <script>
         let money = localStorage.getItem('money');
         // If it doesn't exist, initialize it to 0
-        if (money === null) {
+        if (money == null || money=="NaN") {
             money = 0;
         } else {
             // If it exists, convert it to a number
