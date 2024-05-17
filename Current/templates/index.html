@@ -14,6 +14,7 @@
             height: 100vh; /* Make the body full height */
         }
         .container {
+            position: relative; /* Make container relative for absolute positioning */
             width: calc(100% - 2cm); /* Width of the container */
             height: calc(100% - 2cm); /* Height of the container */
             border: 3mm solid #FFFFFF; /* White border with 3mm width */
@@ -22,6 +23,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+        .coffee-img {
+            position: absolute; /* Position coffee image absolutely within container */
+            top: 0; /* Initially position at the top */
+            left: 0; /* Initially position at the left */
+            cursor: move; /* Set cursor to indicate draggable element */
+            width: 200px; /* Set width of the image */
+            height: 200px; /* Set height of the image */
         }
         .button {
             background-color: #FFFFFF; /* White color */
@@ -44,32 +53,71 @@
     </style>
 </head>
 <body>
+    
+</head>
+<body>
     <div class="container">
-        <img src="images/coffee.jpg">
+        <img src="images/coffee.jpg" class="coffee-img" id="coffee-img">
         <button class="button" onclick="increaseMoney()">Click Me</button>
-        <div id="money">Money: <span id="moneyValue">0</span></div>
+        <div id="money">Money: <span id="moneyValue">{{ money }}</span></div>
     </div>
 
     <script>
         let money = localStorage.getItem('money');
         // If it doesn't exist, initialize it to 0
         if (money == null || money=="NaN") {
-            money = 0;
+        money = 0;
         } else {
-            // If it exists, convert it to a number
-            money = parseInt(money);
+        // If it exists, convert it to a number
+        money = parseInt(money);
         }
         // Update the displayed money value
         document.getElementById('moneyValue').textContent = money;
-
+        
+        
         function increaseMoney() {
-            money++;
-            // Update the displayed money value
-            document.getElementById('moneyValue').textContent = money;
-            // Store the updated money value in localStorage
-            localStorage.setItem('money', money);
+        money++;
+        // Update the displayed money value
+        document.getElementById('moneyValue').textContent = money;
+        // Store the updated money value in localStorage
+        localStorage.setItem('money', money);
         }
+        </script>
+
+    <script>
+        // Get the coffee image element
+        const coffeeImg = document.getElementById('coffee-img');
+
+        // Function to handle mouse movement for dragging the image
+        function handleMouseMove(event) {
+            // Calculate the new position of the image based on mouse position
+            const newX = event.clientX - coffeeImg.offsetWidth / 2;
+            const newY = event.clientY - coffeeImg.offsetHeight / 2;
+
+            // Set the new position of the image
+            coffeeImg.style.left = newX + 'px';
+            coffeeImg.style.top = newY + 'px';
+        }
+
+        // Function to start dragging the image
+        function startDragging(event) {
+            // Prevent default behavior (e.g., text selection) while dragging
+            event.preventDefault();
+
+            // Add event listeners for mousemove and mouseup events
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', stopDragging);
+        }
+
+        // Function to stop dragging the image
+        function stopDragging() {
+            // Remove event listeners for mousemove and mouseup events
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', stopDragging);
+        }
+
+        // Add event listener for mousedown event to start dragging the image
+        coffeeImg.addEventListener('mousedown', startDragging);
     </script>
 </body>
-
 </html>
