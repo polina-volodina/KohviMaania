@@ -43,7 +43,7 @@
             bottom: 80px;
         }
         .button:active {
-            background-color: #ffd5dc; /* Gray color when button is clicked */
+            background-color: #ffd5dc; /* Color when button is clicked */
         }
         #money {
             position: absolute;
@@ -53,39 +53,62 @@
     </style>
 </head>
 <body>
-    
-</head>
-<body>
     <div class="container">
         <img src="images/coffee.jpg" class="coffee-img" id="coffee-img">
         <button class="button" onclick="increaseMoney()">Click Me</button>
+        <button class="button" onclick="buyCoffee()" style="position: absolute; right: 10px; top: 10px;">Buy Coffee</button>
         <div id="money">Money: <span id="moneyValue">{{ money }}</span></div>
     </div>
+</html>
 
-    <script>
+
+<script>
         let money = localStorage.getItem('money');
         // If it doesn't exist, initialize it to 0
-        if (money == null || money=="NaN") {
-        money = 0;
+        if (money === null || isNaN(money)) {
+            money = 0;
         } else {
-        // If it exists, convert it to a number
-        money = parseInt(money);
+            // If it exists, convert it to a number
+            money = parseInt(money);
         }
         // Update the displayed money value
         document.getElementById('moneyValue').textContent = money;
-        
         
         function increaseMoney() {
-        money++;
-        // Update the displayed money value
-        document.getElementById('moneyValue').textContent = money;
-        // Store the updated money value in localStorage
-        localStorage.setItem('money', money);
+            money++;
+            // Update the displayed money value
+            document.getElementById('moneyValue').textContent = money;
+            // Store the updated money value in localStorage
+            localStorage.setItem('money', money);
         }
-        </script>
 
-    <script>
-        // Get the coffee image element
+        function PrintImage(source) {
+            pwa.document.open();
+            pwa.document.write(ImageToPrint(source));
+            pwa.document.close();
+        }
+
+        function ImageToPrint(source) {
+            return "<html><head><scri"+"pt>function step1(){\n" +
+                    "setTimeout('step2()', 10);}\n" +
+                    "function step2(){window.print();window.close()}\n" +
+                    "</scri" + "pt></head><body onload='step1()'>\n" +
+                    "<img src='" + source + "' /></body></html>";
+        }
+
+        function buyCoffee() {
+            const coffeePrice = 10;
+            if (money >= coffeePrice) {
+                money -= coffeePrice;
+                // Update the displayed money value
+                document.getElementById('moneyValue').textContent = money;
+                // Store the updated money value in localStorage
+                localStorage.setItem('money', money);
+            }
+        }
+    
+    
+    // Get the coffee image element
         const coffeeImg = document.getElementById('coffee-img');
 
         // Function to handle mouse movement for dragging the image
@@ -118,6 +141,6 @@
 
         // Add event listener for mousedown event to start dragging the image
         coffeeImg.addEventListener('mousedown', startDragging);
-    </script>
-</body>
-</html>
+        
+</script>
+
