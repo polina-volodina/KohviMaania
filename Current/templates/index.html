@@ -11,7 +11,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh; /* Make the body full height */
+            bottom: 100px; /* Make the body full height */
         }
         .container {
             position: relative; /* Make container relative for absolute positioning */
@@ -54,20 +54,56 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <img src="{{ url_for('static', filename='images/coffee.jpg') }}" class="coffee-img">
-        <form method="post" action="{{ url_for('increase_money') }}">
-            <button class="button" type="submit">Click Me</button>
-        </form>
-        <form method="post" action="{{ url_for('buy_coffee') }}">
-            <button class="button" type="submit">Buy Coffee</button>
-        </form>
-        <div id="money">Money: <span id="moneyValue">{{ money }}</span></div>
-        <div id="additional-coffee-images">
+    <body>
+        <div class="container">
+        <div id="coffee-images"></div>
+            <img src="images/coffee.jpg" class="coffee-img" id="coffee-img">
             {% for _ in range(coffee_count) %}
-                <img src="{{ url_for('static', filename='images/coffee.jpg') }}" class="coffee-img">
-            {% endfor %}
-        </div>
+                    <img src="{{ url_for('static', filename='images/coffee.jpg') }}" class="coffee-img">
+                {% endfor %}
+            </div>
+        <button class="button" onclick="increaseMoney()">Click Me</button>
+        <button class="buttonn" onclick="buyCoffee()">Buy Coffee</button>
+        <div id="money">Money: <span id="moneyValue">{{ money }}</span></div>       
     </div>
+
+ 
+    <script> 
+        // Function to handle mouse movement for dragging the image
+        function handleMouseMove(event) {
+        // Calculate the new position of the image based on mouse position
+        const newX = event.clientX - coffeeImg.offsetWidth / 2;
+        const newY = event.clientY - coffeeImg.offsetHeight / 2;
+
+
+        // Set the new position of the image
+        coffeeImg.style.left = newX + 'px';
+        coffeeImg.style.top = newY + 'px';
+        }
+
+
+        // Function to start dragging the image
+        function startDragging(event) {
+        // Prevent default behavior (e.g., text selection) while dragging
+        event.preventDefault();
+
+
+        // Add event listeners for mousemove and mouseup events
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', stopDragging);
+        }
+
+
+        // Function to stop dragging the image
+        function stopDragging() {
+        // Remove event listeners for mousemove and mouseup events
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', stopDragging);
+        }
+
+
+        // Add event listener for mousedown event to start dragging the image
+        coffeeImg.addEventListener('mousedown', startDragging);
+    <script>
 </body>
 </html>
