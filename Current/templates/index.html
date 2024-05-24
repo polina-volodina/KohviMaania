@@ -23,6 +23,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column; /* Arrange children in a column */
+            align-items: center; /* Center children horizontally */
         }
         .coffee-img {
             position: absolute; /* Position coffee image absolutely within container */
@@ -41,9 +43,9 @@
             cursor: pointer; /* Change cursor on hover */
             position: absolute;
             bottom: 80px;
+            margin-top: 20px;
         }
         .button:active {
-            background-color: #ffd5dc; /* Gray color when button is clicked */
             background-color: #ffd5dc; /* Color when button is clicked */
         }
         #money {
@@ -51,45 +53,50 @@
             top: 60px;
             right: 65px;
         }
+        #additional-coffee-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
     </style>
-</head>
-<body>
-
 </head>
 <body>
     <div class="container">
         <img src="images/coffee.jpg" class="coffee-img" id="coffee-img">
         <button class="button" onclick="increaseMoney()">Click Me</button>
         <button class="button" onclick="buyCoffee()" style="position: absolute; right: 10px; top: 10px;">Buy Coffee</button>
+        <img src="{{ url_for('static', filename='images/coffee.jpg') }}" class="coffee-img">
+        <form method="post" action="{{ url_for('increase_money') }}">
+            <button class="button" type="submit">Click Me</button>
+        </form>
+        <form method="post" action="{{ url_for('buy_coffee') }}">
+            <button class="button" type="submit">Buy Coffee</button>
+        </form>
         <div id="money">Money: <span id="moneyValue">{{ money }}</span></div>
+        <div id="additional-coffee-images">
+            {% for _ in range(coffee_count) %}
+                <img src="{{ url_for('static', filename='images/coffee.jpg') }}" class="coffee-img">
+            {% endfor %}
+        </div>
     </div>
+</body>
 </html>
 
 
-    <script>
 <script>
         let money = localStorage.getItem('money');
         // If it doesn't exist, initialize it to 0
-        if (money == null || money=="NaN") {
-        money = 0;
         if (money === null || isNaN(money)) {
             money = 0;
         } else {
-        // If it exists, convert it to a number
-        money = parseInt(money);
             // If it exists, convert it to a number
             money = parseInt(money);
         }
         // Update the displayed money value
         document.getElementById('moneyValue').textContent = money;
 
-
         function increaseMoney() {
-        money++;
-        // Update the displayed money value
-        document.getElementById('moneyValue').textContent = money;
-        // Store the updated money value in localStorage
-        localStorage.setItem('money', money);
             money++;
             // Update the displayed money value
             document.getElementById('moneyValue').textContent = money;
@@ -110,10 +117,7 @@
                     "</scri" + "pt></head><body onload='step1()'>\n" +
                     "<img src='" + source + "' /></body></html>";
         }
-        </script>
 
-    <script>
-        // Get the coffee image element
         function buyCoffee() {
             const coffeePrice = 10;
             if (money >= coffeePrice) {
@@ -134,18 +138,22 @@
             // Calculate the new position of the image based on mouse position
             const newX = event.clientX - coffeeImg.offsetWidth / 2;
             const newY = event.clientY - coffeeImg.offsetHeight / 2;
+
             // Set the new position of the image
             coffeeImg.style.left = newX + 'px';
             coffeeImg.style.top = newY + 'px';
         }
+
         // Function to start dragging the image
         function startDragging(event) {
             // Prevent default behavior (e.g., text selection) while dragging
             event.preventDefault();
+
             // Add event listeners for mousemove and mouseup events
             document.addEventListener('mousemove', handleMouseMove);
             document.addEventListener('mouseup', stopDragging);
         }
+
         // Function to stop dragging the image
         function stopDragging() {
             // Remove event listeners for mousemove and mouseup events
@@ -155,8 +163,5 @@
 
         // Add event listener for mousedown event to start dragging the image
         coffeeImg.addEventListener('mousedown', startDragging);
-    </script>
-</body>
-</html>
-        
+
 </script>
