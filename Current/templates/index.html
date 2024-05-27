@@ -66,7 +66,7 @@
         <img src="images/coffee.jpg" class="coffee-img" id="coffee-img">
         <button class="button" onclick="increaseMoney()">Click Me</button>
         <button class="button" onclick="buyCoffee()" style="position: absolute; right: 10px; top: 10px;">Buy Coffee</button>
-        <img src="{{ url_for('static', filename='images/coffee.jpg') }}" class="coffee-img">
+        
         <form method="post" action="{{ url_for('increase_money') }}">
             <button class="button" type="submit">Click Me</button>
         </form>
@@ -85,83 +85,88 @@
 
 
 <script>
-        let money = localStorage.getItem('money');
-        // If it doesn't exist, initialize it to 0
-        if (money === null || isNaN(money)) {
-            money = 0;
-        } else {
-            // If it exists, convert it to a number
-            money = parseInt(money);
-        }
+    let money = localStorage.getItem('money');
+    // If it doesn't exist, initialize it to 0
+    if (money === null || isNaN(money)) {
+        money = 0;
+    } else {
+        // If it exists, convert it to a number
+        money = parseInt(money);
+    }
+    // Update the displayed money value
+    document.getElementById('moneyValue').textContent = money;
+
+    function increaseMoney() {
+        money++;
         // Update the displayed money value
         document.getElementById('moneyValue').textContent = money;
+        // Store the updated money value in localStorage
+        localStorage.setItem('money', money);
+    }
 
-        function increaseMoney() {
-            money++;
+    function PrintImage(source) {
+        pwa.document.open();
+        pwa.document.write(ImageToPrint(source));
+        pwa.document.close();
+    }
+
+    function ImageToPrint(source) {
+        return "<html><head><scri"+"pt>function step1(){\n" +
+                "setTimeout('step2()', 10);}\n" +
+                "function step2(){window.print();window.close()}\n" +
+                "</scri" + "pt></head><body onload='step1()'>\n" +
+                "<img src='" + source + "' /></body></html>";
+    }
+
+    function buyCoffee() {
+        const coffeePrice = 10;
+        if (money >= coffeePrice) {
+            money -= coffeePrice;
             // Update the displayed money value
             document.getElementById('moneyValue').textContent = money;
             // Store the updated money value in localStorage
             localStorage.setItem('money', money);
         }
-
-        function PrintImage(source) {
-            pwa.document.open();
-            pwa.document.write(ImageToPrint(source));
-            pwa.document.close();
-        }
-
-        function ImageToPrint(source) {
-            return "<html><head><scri"+"pt>function step1(){\n" +
-                    "setTimeout('step2()', 10);}\n" +
-                    "function step2(){window.print();window.close()}\n" +
-                    "</scri" + "pt></head><body onload='step1()'>\n" +
-                    "<img src='" + source + "' /></body></html>";
-        }
-
-        function buyCoffee() {
-            const coffeePrice = 10;
-            if (money >= coffeePrice) {
-                money -= coffeePrice;
-                // Update the displayed money value
-                document.getElementById('moneyValue').textContent = money;
-                // Store the updated money value in localStorage
-                localStorage.setItem('money', money);
-            }
-        }
+    }
 
 
     // Get the coffee image element
-        const coffeeImg = document.getElementById('coffee-img');
+    const coffeeImg = document.getElementById('coffee-img');
 
-        // Function to handle mouse movement for dragging the image
-        function handleMouseMove(event) {
-            // Calculate the new position of the image based on mouse position
-            const newX = event.clientX - coffeeImg.offsetWidth / 2;
-            const newY = event.clientY - coffeeImg.offsetHeight / 2;
+    // Function to handle mouse movement for dragging the image
+    function handleMouseMove(event) {
+    // Calculate the new position of the image based on mouse position
+    const newX = event.clientX - coffeeImg.offsetWidth / 2;
+    const newY = event.clientY - coffeeImg.offsetHeight / 2;
 
-            // Set the new position of the image
-            coffeeImg.style.left = newX + 'px';
-            coffeeImg.style.top = newY + 'px';
-        }
 
-        // Function to start dragging the image
-        function startDragging(event) {
-            // Prevent default behavior (e.g., text selection) while dragging
-            event.preventDefault();
+    // Set the new position of the image
+    coffeeImg.style.left = newX + 'px';
+    coffeeImg.style.top = newY + 'px';
+    }
 
-            // Add event listeners for mousemove and mouseup events
-            document.addEventListener('mousemove', handleMouseMove);
-            document.addEventListener('mouseup', stopDragging);
-        }
 
-        // Function to stop dragging the image
-        function stopDragging() {
-            // Remove event listeners for mousemove and mouseup events
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', stopDragging);
-        }
+    // Function to start dragging the image
+    function startDragging(event) {
+    // Prevent default behavior (e.g., text selection) while dragging
+    event.preventDefault();
 
-        // Add event listener for mousedown event to start dragging the image
-        coffeeImg.addEventListener('mousedown', startDragging);
+
+    // Add event listeners for mousemove and mouseup events
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', stopDragging);
+    }
+
+
+    // Function to stop dragging the image
+    function stopDragging() {
+    // Remove event listeners for mousemove and mouseup events
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', stopDragging);
+    }
+
+
+    // Add event listener for mousedown event to start dragging the image
+    coffeeImg.addEventListener('mousedown', startDragging);
 
 </script>
