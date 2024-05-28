@@ -70,7 +70,7 @@
         <div id="money">Money: <span id="moneyValue">{{ money }}</span></div>
         <div id="additional-coffee-images">
             {% for _ in range(coffee_count) %}
-                <img src="{{ url_for('static', filename='images/coffee.jpg') }}" class="coffee-img">
+                <img src="images/coffee.jpg" class="coffee-img" id="coffee-img">
             {% endfor %}
         </div>
         
@@ -81,6 +81,7 @@
 
 <script>
     let money = localStorage.getItem('money');
+    
     // If it doesn't exist, initialize it to 0
     if (money === null || isNaN(money)) {
         money = 0;
@@ -90,6 +91,7 @@
     }
     // Update the displayed money value
     document.getElementById('moneyValue').textContent = money;
+    
 
     function increaseMoney() {
         money++;
@@ -114,22 +116,28 @@
     }
 
     function buyCoffee() {
+        
             const coffeePrice = 10;
             if (money >= coffeePrice) {
+                alert(money);
                 money -= coffeePrice;
-                coffeeCount++;
+        
+                //coffeeCount++;
                 // Update the displayed money value
-                document.getElementById('moneyValue').textContent = money;
+                
                 // Store the updated money value in localStorage
                 localStorage.setItem('money', money);
+            
                 // Add a new coffee image
                 const coffeeImagesDiv = document.getElementById('additional-coffee-images');
                 const newCoffeeImage = document.createElement('img');
-                newCoffeeImage.src = "{{ url_for('static', filename='images/coffee.jpg') }}";
+                newCoffeeImage.src = "{{ url_for('static', filename='coffee.jpg') }}";
                 newCoffeeImage.className = 'coffee-img';
                 coffeeImagesDiv.appendChild(newCoffeeImage);
                 // Make the new image draggable
                 makeImageDraggable(newCoffeeImage);
+                document.getElementById('moneyValue').textContent = money;
+                alert(money);
             }
         }
 
@@ -137,40 +145,112 @@
     // Get the coffee image element
     const coffeeImg = document.getElementById('coffee-img');
 
+    /*
     // Function to handle mouse movement for dragging the image
     function handleMouseMove(event) {
-    // Calculate the new position of the image based on mouse position
-    const newX = event.clientX - coffeeImg.offsetWidth / 2;
-    const newY = event.clientY - coffeeImg.offsetHeight / 2;
+        // Calculate the new position of the image based on mouse position
+        const newX = event.clientX - coffeeImg.offsetWidth / 2;
+        const newY = event.clientY - coffeeImg.offsetHeight / 2;
 
 
-    // Set the new position of the image
-    coffeeImg.style.left = newX + 'px';
-    coffeeImg.style.top = newY + 'px';
+        // Set the new position of the image
+        coffeeImg.style.left = newX + 'px';
+        coffeeImg.style.top = newY + 'px';
     }
 
 
     // Function to start dragging the image
     function startDragging(event) {
-    // Prevent default behavior (e.g., text selection) while dragging
-    event.preventDefault();
+        // Prevent default behavior (e.g., text selection) while dragging
+        event.preventDefault();
 
 
-    // Add event listeners for mousemove and mouseup events
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', stopDragging);
+        // Add event listeners for mousemove and mouseup events
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', stopDragging);
     }
 
 
+
     // Function to stop dragging the image
-    function stopDragging() {
-    // Remove event listeners for mousemove and mouseup events
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', stopDragging);
+        function stopDragging() {
+        // Remove event listeners for mousemove and mouseup events
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', stopDragging);
     }
 
 
     // Add event listener for mousedown event to start dragging the image
     coffeeImg.addEventListener('mousedown', startDragging);
+
+
+
+    // Function to make images draggable
+    function makeImageDraggable(img) {
+        img.addEventListener('mousedown', function(event) {
+            event.preventDefault();
+            let shiftX = event.clientX - img.getBoundingClientRect().left;
+            let shiftY = event.clientY - img.getBoundingClientRect().top;
+            function moveAt(pageX, pageY) {
+                img.style.left = pageX - shiftX + 'px';
+                img.style.top = pageY - shiftY + 'px';
+            }
+            moveAt(event.pageX, event.pageY);
+            function onMouseMove(event) {
+                moveAt(event.pageX, event.pageY);
+            }
+            document.addEventListener('mousemove', onMouseMove);
+            img.onmouseup = function() {
+                document.removeEventListener('mousemove', onMouseMove);
+                img.onmouseup = null;
+            };
+        });
+        img.ondragstart = function() {
+        return false;
+    };
+*/
+
+function makeImageDraggable(img) {
+    img.addEventListener('mousedown', function(event) {
+        event.preventDefault();
+
+        let shiftX = event.clientX - img.getBoundingClientRect().left;
+        let shiftY = event.clientY - img.getBoundingClientRect().top;
+
+        function moveAt(pageX, pageY) {
+            img.style.left = pageX - shiftX + 'px';
+            img.style.top = pageY - shiftY + 'px';
+        }
+
+        function onMouseMove(event) {
+            moveAt(event.pageX, event.pageY);
+        }
+
+        document.addEventListener('mousemove', onMouseMove);
+
+        img.onmouseup = function() {
+            document.removeEventListener('mousemove', onMouseMove);
+            img.onmouseup = null;
+            // Save the position in localStorage
+            localStorage.setItem('coffeeImgPosition', JSON.stringify({
+                left: img.style.left,
+                top: img.style.top
+            }));
+        };
+    });
+
+    img.ondragstart = function() {
+        return false;
+    };
+
+    img.addEventListener('dblclick', function(event) {
+        event.preventDefault();
+    });
+}
+
+
+
+// Make all initial images draggable
+document.querySelectorAll('.coffee-img').forEach(makeImageDraggable);
 
 </script>

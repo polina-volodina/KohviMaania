@@ -14,6 +14,7 @@ def index():
     return render_template('index.html', money=money, coffee_count=coffee_count)
 
 
+"""
 @app.route('/buy_coffee', methods=['POST'])
 def buy_coffee():
     global money, coffee_count
@@ -28,6 +29,7 @@ def increase_money():
     global money
     money += 1
     return redirect(url_for('index'))
+"""
 
 if __name__ == '__main__':
     app.run(debug=True)
