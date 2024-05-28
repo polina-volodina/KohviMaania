@@ -66,19 +66,14 @@
         <img src="images/coffee.jpg" class="coffee-img" id="coffee-img">
         <button class="button" onclick="increaseMoney()">Click Me</button>
         <button class="button" onclick="buyCoffee()" style="position: absolute; right: 10px; top: 10px;">Buy Coffee</button>
-        
-        <form method="post" action="{{ url_for('increase_money') }}">
-            <button class="button" type="submit">Click Me</button>
-        </form>
-        <form method="post" action="{{ url_for('buy_coffee') }}">
-            <button class="button" type="submit">Buy Coffee</button>
-        </form>
+    
         <div id="money">Money: <span id="moneyValue">{{ money }}</span></div>
         <div id="additional-coffee-images">
             {% for _ in range(coffee_count) %}
                 <img src="{{ url_for('static', filename='images/coffee.jpg') }}" class="coffee-img">
             {% endfor %}
         </div>
+        
     </div>
 </body>
 </html>
@@ -119,15 +114,24 @@
     }
 
     function buyCoffee() {
-        const coffeePrice = 10;
-        if (money >= coffeePrice) {
-            money -= coffeePrice;
-            // Update the displayed money value
-            document.getElementById('moneyValue').textContent = money;
-            // Store the updated money value in localStorage
-            localStorage.setItem('money', money);
+            const coffeePrice = 10;
+            if (money >= coffeePrice) {
+                money -= coffeePrice;
+                coffeeCount++;
+                // Update the displayed money value
+                document.getElementById('moneyValue').textContent = money;
+                // Store the updated money value in localStorage
+                localStorage.setItem('money', money);
+                // Add a new coffee image
+                const coffeeImagesDiv = document.getElementById('additional-coffee-images');
+                const newCoffeeImage = document.createElement('img');
+                newCoffeeImage.src = "{{ url_for('static', filename='images/coffee.jpg') }}";
+                newCoffeeImage.className = 'coffee-img';
+                coffeeImagesDiv.appendChild(newCoffeeImage);
+                // Make the new image draggable
+                makeImageDraggable(newCoffeeImage);
+            }
         }
-    }
 
 
     // Get the coffee image element
