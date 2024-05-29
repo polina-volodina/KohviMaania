@@ -68,10 +68,19 @@
         <button class="button" onclick="increaseMoney()"  style="position: absolute; right: 10px; top: 30px;">Click Me</button>
         <button class="button" onclick="buyCoffee()" style="position: absolute; right: 10px; top: 90px;">Buy Coffee</button>
         <div id="money">Money: <span id="moneyValue">{{ money }}</span></div>
+        <div id="coffeeCount">Coffee Count: <span id="coffeeCountValue"></span></div>
         <div id="additional-coffee-images">
-            {% for _ in range(coffeeCount) %}
-                <img src="images/coffee.jpg" class="coffee-img">
-            {% endfor %}
+            <script>
+            
+            let imgTag = "";
+
+            for(let i = 0; i < coffeeCount; i++) {
+            imgTag += "<img src='images/coffee.jpg' class='coffee-img'>\n";
+            }
+
+            document.write(imgTag);
+                
+            </script>
         </div>
     </div>
 
@@ -92,6 +101,7 @@
     }
     // Update the displayed money value
     document.getElementById('moneyValue').textContent = money;
+    document.getElementById('coffeeCountValue').textContent = coffeeCount;
     
 
     function increaseMoney() {
@@ -112,6 +122,7 @@ function buyCoffee() {
         document.getElementById('moneyValue').textContent = money;
         // Store the updated money value in localStorage
         localStorage.setItem('money', money);
+
 
         coffeeCount++;
         localStorage.setItem('coffeeCount', coffeeCount);
