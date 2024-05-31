@@ -10,13 +10,13 @@
             padding: 0; /* Remove default padding */
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh; /* Make the body full height */
+            align-items: center; /* Align items at the top */
+            min-height: 100vh; /* Ensure full height */
         }
         .container {
             position: relative; /* Make container relative for absolute positioning */
             width: calc(100% - 2cm); /* Width of the container */
-            height: calc(100% - 2cm); /* Height of the container */
+            min-height: calc(100vh - 2cm); /* Minimum height of the container */
             border: 3mm solid #FFFFFF; /* White border with 3mm width */
             box-sizing: border-box; /* Include border in width and height calculations */
             padding: 1cm; /* Padding inside the container */
@@ -24,6 +24,7 @@
             justify-content: center;
             flex-direction: column; /* Arrange children in a column */
             align-items: center; /* Center children horizontally */
+            overflow: hidden; /* Prevent overflow */
         }
         .coffee-img {
             cursor: move; /* Set cursor to indicate draggable element */
@@ -56,21 +57,25 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="container">
         <button class="button" onclick="increaseMoney()" style="position: absolute; right: 10px; top: 30px;">Click Me</button>
         <button class="button" onclick="buyCoffee()" style="position: absolute; right: 10px; top: 90px;">Buy Coffee</button>
         <div id="money">Money: <span id="moneyValue">{{ money }}</span></div>
         <div id="coffeeCount">Coffee Count: <span id="coffeeCountValue"></span></div>
         <div id="image2Count">Coffee 2 Count: <span id="image2CountValue"></span></div>
         <div id="image3Count">Coffee 3 Count: <span id="image3CountValue"></span></div>
+        <div id="image4Count">Coffee 4 Count: <span id="image4CountValue"></span></div>
+        <div id="image5Count">Coffee 5 Count: <span id="image5CountValue"></span></div>
         <div id="additional-coffee-images"></div>
     </div>
 
     <script>
         let money = localStorage.getItem('money');
-        let coffeeCount =0;
+        let coffeeCount = 0;
         let image2Count = 0;
         let image3Count = 0;
+        let image4Count = 0;
+        let image5Count = 0;
 
         if (money === null || isNaN(money)) {
             money = 0;
@@ -92,11 +97,23 @@
         } else {
             image3Count = parseInt(image3Count);
         }
+        if (image4Count === null || isNaN(image4Count)) {
+            image4Count = 0;
+        } else {
+            image4Count = parseInt(image4Count);
+        }
+        if (image5Count === null || isNaN(image5Count)) {
+            image5Count = 0;
+        } else {
+            image5Count = parseInt(image5Count);
+        }
 
         document.getElementById('moneyValue').textContent = money;
         document.getElementById('coffeeCountValue').textContent = coffeeCount;
         document.getElementById('image2CountValue').textContent = image2Count;
         document.getElementById('image3CountValue').textContent = image3Count;
+        document.getElementById('image4CountValue').textContent = image4Count;
+        document.getElementById('image5CountValue').textContent = image5Count;
 
         function increaseMoney() {
             money += 10000;
@@ -126,6 +143,9 @@
         }
 
         function makeImageDraggable(image) {
+            const container = document.getElementById('container');
+            const containerRect = container.getBoundingClientRect();
+
             image.onmousedown = function(event) {
                 var img = this;
                 event.preventDefault();
@@ -135,13 +155,22 @@
 
                 img.style.position = 'absolute';
                 img.style.zIndex = 1000;
-                document.body.append(img);
+                container.append(img);
 
                 moveAt(event.pageX, event.pageY);
 
                 function moveAt(pageX, pageY) {
-                    img.style.left = pageX - shiftX + 'px';
-                    img.style.top = pageY - shiftY + 'px';
+                    let newLeft = pageX - shiftX;
+                    let newTop = pageY - shiftY;
+
+                    // Ensure image stays within container
+                    newLeft = Math.max(newLeft, 20);
+                    newLeft = Math.min(newLeft, containerRect.width - img.offsetWidth - 20);
+                    newTop = Math.max(newTop, 20);
+                    newTop = Math.min(newTop, containerRect.height - img.offsetHeight - 20);
+
+                    img.style.left = newLeft + 'px';
+                    img.style.top = newTop + 'px';
                 }
 
                 function onMouseMove(event) {
@@ -204,19 +233,61 @@
                 image3Count++;
                 localStorage.setItem('image3Count', image3Count);
                 document.getElementById('image3CountValue').textContent = image3Count;
+            } else if (src1 === 'coffee3.jpg' && src2 === 'coffee3.jpg') {
+                image3Count -= 2;
+                localStorage.setItem('image3Count', image3Count);
+                document.getElementById('image3CountValue').textContent = image3Count;
+
+                addNewImage('coffee4.jpg', img1.style.left, img1.style.top);
+                image4Count++;
+                localStorage.setItem('image4Count', image4Count);
+                document.getElementById('image4CountValue').textContent = image4Count;
+            } else if (src1 === 'coffee4.jpg' && src2 === 'coffee4.jpg') {
+                image4Count -= 2;
+                localStorage.setItem('image4Count', image4Count);
+                document.getElementById('image4CountValue').textContent = image4Count;
+
+                addNewImage('coffee5.jpg', img1.style.left, img1.style.top);
+                image5Count++;
+                localStorage.setItem('image5Count', image5Count);
+                document.getElementById('image5CountValue').textContent = image5Count;
+            } else if (src1 === 'coffee5.jpg' && src2 === 'coffee5.jpg') {
+                const currentWidth = parseInt(img1.style.width) || 200;
+                const currentHeight = parseInt(img1.style.height) || 200;
+                const newSize = Math.min(currentWidth * 1.5, 1000);
+
+                if (newSize < 1000) {
+                    image5Count -= 2;
+                    localStorage.setItem('image5Count', image5Count);
+                    document.getElementById('image5CountValue').textContent = image5Count;
+
+                    addNewImage('coffee5.jpg', img1.style.left, img1.style.top, newSize + 'px', newSize + 'px');
+                    image5Count++;
+                    localStorage.setItem('image5Count', image5Count);
+                    document.getElementById('image5CountValue').textContent = image5Count;
+                } else {
+                    image5Count -= 1;
+                    localStorage.setItem('image5Count', image5Count);
+                    document.getElementById('image5CountValue').textContent = image5Count;
+
+                    img1.style.width = newSize + 'px';
+                    img1.style.height = newSize + 'px';
+                }
             }
 
             img1.remove();
             img2.remove();
         }
 
-        function addNewImage(imageSrc, left, top) {
+        function addNewImage(imageSrc, left, top, width = '200px', height = '200px') {
             const newImage = document.createElement('img');
             newImage.src = "images/" + imageSrc;
             newImage.className = 'coffee-img';
             newImage.style.position = 'absolute';
             newImage.style.left = left;
             newImage.style.top = top;
+            newImage.style.width = width;
+            newImage.style.height = height;
             document.body.appendChild(newImage);
 
             makeImageDraggable(newImage);
@@ -246,6 +317,22 @@
                 coffee3Image.className = 'coffee-img';
                 coffeeImagesDiv.appendChild(coffee3Image);
                 makeImageDraggable(coffee3Image);
+            }
+
+            for (let i = 0; i < image4Count; i++) {
+                const coffee4Image = document.createElement('img');
+                coffee4Image.src = "images/coffee4.jpg";
+                coffee4Image.className = 'coffee-img';
+                coffeeImagesDiv.appendChild(coffee4Image);
+                makeImageDraggable(coffee4Image);
+            }
+
+            for (let i = 0; i < image5Count; i++) {
+                const coffee5Image = document.createElement('img');
+                coffee5Image.src = "images/coffee5.jpg";
+                coffee5Image.className = 'coffee-img';
+                coffeeImagesDiv.appendChild(coffee5Image);
+                makeImageDraggable(coffee5Image);
             }
         };
     </script>
