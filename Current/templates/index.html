@@ -61,16 +61,16 @@
         <button class="button" onclick="buyCoffee()" style="position: absolute; right: 10px; top: 90px;">Buy Coffee</button>
         <div id="money">Money: <span id="moneyValue">{{ money }}</span></div>
         <div id="coffeeCount">Coffee Count: <span id="coffeeCountValue"></span></div>
-        <div id="image2Count">Image 2 Count: <span id="image2CountValue"></span></div>
-        <div id="image3Count">Image 3 Count: <span id="image3CountValue"></span></div>
+        <div id="image2Count">Coffee 2 Count: <span id="image2CountValue"></span></div>
+        <div id="image3Count">Coffee 3 Count: <span id="image3CountValue"></span></div>
         <div id="additional-coffee-images"></div>
     </div>
 
     <script>
         let money = localStorage.getItem('money');
-        let coffeeCount = localStorage.getItem('coffeeCount');
-        let image2Count = localStorage.getItem('image2Count');
-        let image3Count = localStorage.getItem('image3Count');
+        let coffeeCount =0;
+        let image2Count = 0;
+        let image3Count = 0;
 
         if (money === null || isNaN(money)) {
             money = 0;
