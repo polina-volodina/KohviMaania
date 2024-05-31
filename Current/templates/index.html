@@ -70,43 +70,24 @@
     </div>
 
     <script>
+        
         let money = localStorage.getItem('money');
-        let coffeeCount = 0;
-        let image2Count = 0;
-        let image3Count = 0;
-        let image4Count = 0;
-        let image5Count = 0;
+        let coffeeCount = localStorage.getItem('coffeeCount') || 0;
+        let image2Count = localStorage.getItem('image2Count') || 0;
+        let image3Count = localStorage.getItem('image3Count') || 0;
+        let image4Count = localStorage.getItem('image4Count') || 0;
+        let image5Count = localStorage.getItem('image5Count') || 0;
 
         if (money === null || isNaN(money)) {
             money = 0;
         } else {
             money = parseInt(money);
         }
-        if (coffeeCount === null || isNaN(coffeeCount)) {
-            coffeeCount = 0;
-        } else {
-            coffeeCount = parseInt(coffeeCount);
-        }
-        if (image2Count === null || isNaN(image2Count)) {
-            image2Count = 0;
-        } else {
-            image2Count = parseInt(image2Count);
-        }
-        if (image3Count === null || isNaN(image3Count)) {
-            image3Count = 0;
-        } else {
-            image3Count = parseInt(image3Count);
-        }
-        if (image4Count === null || isNaN(image4Count)) {
-            image4Count = 0;
-        } else {
-            image4Count = parseInt(image4Count);
-        }
-        if (image5Count === null || isNaN(image5Count)) {
-            image5Count = 0;
-        } else {
-            image5Count = parseInt(image5Count);
-        }
+        coffeeCount = parseInt(coffeeCount);
+        image2Count = parseInt(image2Count);
+        image3Count = parseInt(image3Count);
+        image4Count = parseInt(image4Count);
+        image5Count = parseInt(image5Count);
 
         document.getElementById('moneyValue').textContent = money;
         document.getElementById('coffeeCountValue').textContent = coffeeCount;
@@ -114,6 +95,7 @@
         document.getElementById('image3CountValue').textContent = image3Count;
         document.getElementById('image4CountValue').textContent = image4Count;
         document.getElementById('image5CountValue').textContent = image5Count;
+
 
         function increaseMoney() {
             money += 10000;
