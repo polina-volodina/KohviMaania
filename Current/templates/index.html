@@ -83,11 +83,31 @@
         } else {
             money = parseInt(money);
         }
-        coffeeCount = parseInt(coffeeCount);
-        image2Count = parseInt(image2Count);
-        image3Count = parseInt(image3Count);
-        image4Count = parseInt(image4Count);
-        image5Count = parseInt(image5Count);
+        if (coffeeCount === null || isNaN(coffeeCount)) {
+            coffeeCount = 0;
+        } else {
+            coffeeCount = parseInt(coffeeCount);
+        }
+        if (image2Count === null || isNaN(image2Count)) {
+            image2Count = 0;
+        } else {
+            image2Count = parseInt(image2Count);
+        }
+        if (image3Count === null || isNaN(image3Count)) {
+            image3Count = 0;
+        } else {
+            image3Count = parseInt(image3Count);
+        }
+        if (image4Count === null || isNaN(image4Count)) {
+            image4Count = 0;
+        } else {
+            image4Count = parseInt(image4Count);
+        }
+        if (image5Count === null || isNaN(image5Count)) {
+            image5Count = 0;
+        } else {
+            image5Count = parseInt(image5Count);
+        }
 
         document.getElementById('moneyValue').textContent = money;
         document.getElementById('coffeeCountValue').textContent = coffeeCount;
@@ -95,7 +115,6 @@
         document.getElementById('image3CountValue').textContent = image3Count;
         document.getElementById('image4CountValue').textContent = image4Count;
         document.getElementById('image5CountValue').textContent = image5Count;
-
 
         function increaseMoney() {
             money += 10000;
@@ -124,12 +143,13 @@
             }
         }
 
+        // Function to make image draggable
         function makeImageDraggable(image) {
             const container = document.getElementById('container');
             const containerRect = container.getBoundingClientRect();
-
+            
             image.onmousedown = function(event) {
-                var img = this;
+                var img = this; // 'this' refers to the image that is being clicked on
                 event.preventDefault();
 
                 var shiftX = event.clientX - img.getBoundingClientRect().left;
@@ -137,7 +157,7 @@
 
                 img.style.position = 'absolute';
                 img.style.zIndex = 1000;
-                container.append(img);
+                document.body.append(img);
 
                 moveAt(event.pageX, event.pageY);
 
@@ -151,8 +171,8 @@
                     newTop = Math.max(newTop, 20);
                     newTop = Math.min(newTop, containerRect.height - img.offsetHeight - 20);
 
-                    img.style.left = newLeft + 'px';
-                    img.style.top = newTop + 'px';
+                    img.style.left = pageX - shiftX + 'px';
+                    img.style.top = pageY - shiftY + 'px';
                 }
 
                 function onMouseMove(event) {
@@ -166,11 +186,17 @@
                     document.removeEventListener('mousemove', onMouseMove);
                     img.onmouseup = null;
                 };
+
             };
 
             image.ondragstart = function() {
                 return false;
             };
+               
+
+                image.ondragstart = function() {
+                    return false;
+                };
         }
 
         function checkCollisions(movingImg) {
@@ -187,10 +213,13 @@
             const rect1 = img1.getBoundingClientRect();
             const rect2 = img2.getBoundingClientRect();
 
-            return !(rect1.right < rect2.left || 
-                     rect1.left > rect2.right || 
-                     rect1.bottom < rect2.top || 
-                     rect1.top > rect2.bottom);
+            const center1 = { x: rect1.left + rect1.width / 2, y: rect1.top + rect1.height / 2 };
+            const center2 = { x: rect2.left + rect2.width / 2, y: rect2.top + rect2.height / 2 };
+
+            const distance = Math.sqrt((center1.x - center2.x) ** 2 + (center1.y - center2.y) ** 2);
+            const collisionDistance = 10; // Adjust this value based on your requirement
+
+            return distance <= collisionDistance;
         }
 
         function handleCollision(img1, img2) {
