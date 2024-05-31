@@ -57,17 +57,20 @@
 </head>
 <body>
     <div class="container">
-        <img src="images/coffee.jpg" class="coffee-img" id="initial-coffee">
+        
         <button class="button" onclick="increaseMoney()" style="position: absolute; right: 10px; top: 30px;">Click Me</button>
         <button class="button" onclick="buyCoffee()" style="position: absolute; right: 10px; top: 90px;">Buy Coffee</button>
         <div id="money">Money: <span id="moneyValue">{{ money }}</span></div>
         <div id="coffeeCount">Coffee Count: <span id="coffeeCountValue"></span></div>
+        <div id="image2Count">Image 2 Count: <span id="image2CountValue"></span></div>
         <div id="additional-coffee-images"></div>
     </div>
 
     <script>
         let money = localStorage.getItem('money');
         let coffeeCount = localStorage.getItem('coffeeCount');
+        let image2Count = localStorage.getItem('image2Count');
+        
         
         // If it doesn't exist, initialize it to 0
         if (money === null || isNaN(money)) {
@@ -82,12 +85,20 @@
             // If it exists, convert it to a number
             coffeeCount = parseInt(coffeeCount);
         }
-        // Update the displayed money and coffee count values
+        if (image2Count === null || isNaN(image2Count)) {
+            image2Count = 0;
+        } else {
+            // If it exists, convert it to a number
+            image2Count = parseInt(image2Count);
+        }
+        
+        // Update the displayed values
         document.getElementById('moneyValue').textContent = money;
         document.getElementById('coffeeCountValue').textContent = coffeeCount;
+        document.getElementById('image2CountValue').textContent = image2Count;
 
         function increaseMoney() {
-            money++;
+            money+=10000;
             // Update the displayed money value
             document.getElementById('moneyValue').textContent = money;
             // Store the updated money value in localStorage
@@ -107,6 +118,9 @@
 
                 coffeeCount++;
                 localStorage.setItem('coffeeCount', coffeeCount);
+
+                // Update the displayed coffee count value
+                document.getElementById('coffeeCountValue').textContent = coffeeCount;
 
                 // Add a new coffee image
                 const coffeeImagesDiv = document.getElementById('additional-coffee-images');
@@ -161,7 +175,7 @@
         function checkCollisions(movingImg) {
             const coffeeImages = document.getElementsByClassName('coffee-img');
             for (let img of coffeeImages) {
-                if (img !== movingImg && isColliding(movingImg, img)) {
+                if (img !== movingImg && img.src === movingImg.src && isColliding(movingImg, img)) {
                     handleCollision(movingImg, img);
                     break;
                 }
@@ -196,6 +210,11 @@
             newImage.style.left = img1.style.left;
             newImage.style.top = img1.style.top;
             document.body.appendChild(newImage);
+
+            // Update image 2 count
+            image2Count++;
+            localStorage.setItem('image2Count', image2Count);
+            document.getElementById('image2CountValue').textContent = image2Count;
 
             makeImageDraggable(newImage); // Make the new image draggable
         }
