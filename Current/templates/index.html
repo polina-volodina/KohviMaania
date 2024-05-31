@@ -26,8 +26,6 @@
             align-items: center; /* Center children horizontally */
         }
         .coffee-img {
-            position: relative; /* Position coffee image absolutely within container */
-
             cursor: move; /* Set cursor to indicate draggable element */
             width: 200px; /* Set width of the image */
             height: 200px; /* Set height of the image */
@@ -39,8 +37,6 @@
             border: none; /* Remove border */
             border-radius: 5px; /* Rounded corners */
             cursor: pointer; /* Change cursor on hover */
-            /*position: absolute;
-            bottom: 80px;*/
             margin-top: 20px;
         }
         .button:active {
@@ -54,134 +50,171 @@
         #additional-coffee-images {
             display: flex;
             flex-wrap: wrap;
-            cursor: move; /* Set cursor to indicate draggable element */
             gap: 3px;
             margin-top: 20px;
-            cursor: pointer; /* Set cursor to indicate draggable element */
         }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <img src="images/coffee.jpg" class="coffee-img">
-        <button class="button" onclick="increaseMoney()"  style="position: absolute; right: 10px; top: 30px;">Click Me</button>
+        <img src="images/coffee.jpg" class="coffee-img" id="initial-coffee">
+        <button class="button" onclick="increaseMoney()" style="position: absolute; right: 10px; top: 30px;">Click Me</button>
         <button class="button" onclick="buyCoffee()" style="position: absolute; right: 10px; top: 90px;">Buy Coffee</button>
         <div id="money">Money: <span id="moneyValue">{{ money }}</span></div>
         <div id="coffeeCount">Coffee Count: <span id="coffeeCountValue"></span></div>
-        <div id="additional-coffee-images">
-            <script>
-            
-            let imgTag = "";
-
-            for(let i = 0; i < coffeeCount; i++) {
-            imgTag += "<img src='images/coffee.jpg' class='coffee-img'>\n";
-            }
-
-            document.write(imgTag);
-                
-            </script>
-        </div>
+        <div id="additional-coffee-images"></div>
     </div>
 
+    <script>
+        let money = localStorage.getItem('money');
+        let coffeeCount = localStorage.getItem('coffeeCount');
+        
+        // If it doesn't exist, initialize it to 0
+        if (money === null || isNaN(money)) {
+            money = 0;
+        } else {
+            // If it exists, convert it to a number
+            money = parseInt(money);
+        }
+        if (coffeeCount === null || isNaN(coffeeCount)) {
+            coffeeCount = 0;
+        } else {
+            // If it exists, convert it to a number
+            coffeeCount = parseInt(coffeeCount);
+        }
+        // Update the displayed money and coffee count values
+        document.getElementById('moneyValue').textContent = money;
+        document.getElementById('coffeeCountValue').textContent = coffeeCount;
+
+        function increaseMoney() {
+            money++;
+            // Update the displayed money value
+            document.getElementById('moneyValue').textContent = money;
+            // Store the updated money value in localStorage
+            localStorage.setItem('money', money);
+        }
+
+        // Function to buy coffee
+        function buyCoffee() {
+            const coffeePrice = 10;
+            
+            if (money >= coffeePrice) {
+                money -= coffeePrice;
+                // Update the displayed money value
+                document.getElementById('moneyValue').textContent = money;
+                // Store the updated money value in localStorage
+                localStorage.setItem('money', money);
+
+                coffeeCount++;
+                localStorage.setItem('coffeeCount', coffeeCount);
+
+                // Add a new coffee image
+                const coffeeImagesDiv = document.getElementById('additional-coffee-images');
+                const newCoffeeImage = document.createElement('img');
+                newCoffeeImage.src = "images/coffee.jpg";
+                newCoffeeImage.className = 'coffee-img';
+                coffeeImagesDiv.appendChild(newCoffeeImage);
+                makeImageDraggable(newCoffeeImage); // Make the new image draggable
+            }
+        }
+
+        // Function to make image draggable
+        function makeImageDraggable(image) {
+            image.onmousedown = function(event) {
+                var img = this; // 'this' refers to the image that is being clicked on
+                event.preventDefault();
+
+                var shiftX = event.clientX - img.getBoundingClientRect().left;
+                var shiftY = event.clientY - img.getBoundingClientRect().top;
+
+                img.style.position = 'absolute';
+                img.style.zIndex = 1000;
+                document.body.append(img);
+
+                moveAt(event.pageX, event.pageY);
+
+                function moveAt(pageX, pageY) {
+                    img.style.left = pageX - shiftX + 'px';
+                    img.style.top = pageY - shiftY + 'px';
+                }
+
+                function onMouseMove(event) {
+                    moveAt(event.pageX, event.pageY);
+
+                    // Check for collisions
+                    checkCollisions(img);
+                }
+
+                document.addEventListener('mousemove', onMouseMove);
+
+                img.onmouseup = function() {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    img.onmouseup = null;
+                };
+            };
+
+            image.ondragstart = function() {
+                return false;
+            };
+        }
+
+        function checkCollisions(movingImg) {
+            const coffeeImages = document.getElementsByClassName('coffee-img');
+            for (let img of coffeeImages) {
+                if (img !== movingImg && isColliding(movingImg, img)) {
+                    handleCollision(movingImg, img);
+                    break;
+                }
+            }
+        }
+
+        function isColliding(img1, img2) {
+            const rect1 = img1.getBoundingClientRect();
+            const rect2 = img2.getBoundingClientRect();
+
+            return !(rect1.right < rect2.left || 
+                     rect1.left > rect2.right || 
+                     rect1.bottom < rect2.top || 
+                     rect1.top > rect2.bottom);
+        }
+
+        function handleCollision(img1, img2) {
+            // Remove both images
+            img1.remove();
+            img2.remove();
+
+            // Update coffee count
+            coffeeCount -= 2;
+            localStorage.setItem('coffeeCount', coffeeCount);
+            document.getElementById('coffeeCountValue').textContent = coffeeCount;
+
+            // Add a new image (image 2) at the collision point
+            const newImage = document.createElement('img');
+            newImage.src = "images/coffee2.jpg"; // Path to the new image
+            newImage.className = 'coffee-img';
+            newImage.style.position = 'absolute';
+            newImage.style.left = img1.style.left;
+            newImage.style.top = img1.style.top;
+            document.body.appendChild(newImage);
+
+            makeImageDraggable(newImage); // Make the new image draggable
+        }
+
+        window.onload = function() {
+            const coffeeImagesDiv = document.getElementById('additional-coffee-images');
+            for (let i = 0; i < coffeeCount; i++) {
+                const coffeeImage = document.createElement('img');
+                coffeeImage.src = "images/coffee.jpg";
+                coffeeImage.className = 'coffee-img';
+                coffeeImagesDiv.appendChild(coffeeImage);
+                makeImageDraggable(coffeeImage);
+            }
+
+            var images = document.getElementsByClassName('coffee-img');
+            for (var i = 0; i < images.length; i++) {
+                makeImageDraggable(images[i]);
+            }
+        };
+    </script>
 </body>
 </html>
-
-
-<script>
-    let money = localStorage.getItem('money');
-    let coffeeCount = localStorage.getItem('coffeeCount');
-    
-    // If it doesn't exist, initialize it to 0
-    if (money === null || isNaN(money)) {
-        money = 0;
-    } else {
-        // If it exists, convert it to a number
-        money = parseInt(money);
-    }
-    // Update the displayed money value
-    document.getElementById('moneyValue').textContent = money;
-    document.getElementById('coffeeCountValue').textContent = coffeeCount;
-    
-
-    function increaseMoney() {
-        money++;
-        // Update the displayed money value
-        document.getElementById('moneyValue').textContent = money;
-        // Store the updated money value in localStorage
-        localStorage.setItem('money', money);
-    }
-
-    // Function to buy coffee
-function buyCoffee() {
-    const coffeePrice = 10;
-    
-    if (money >= coffeePrice) {
-        money -= coffeePrice;
-        // Update the displayed money value
-        document.getElementById('moneyValue').textContent = money;
-        // Store the updated money value in localStorage
-        localStorage.setItem('money', money);
-
-
-        coffeeCount++;
-        localStorage.setItem('coffeeCount', coffeeCount);
-
-        // Add a new coffee image
-        const coffeeImagesDiv = document.getElementById('additional-coffee-images');
-        const newCoffeeImage = document.createElement('img');
-        newCoffeeImage.src = "images/coffee.jpg";
-        newCoffeeImage.className = 'coffee-img';
-        coffeeImagesDiv.appendChild(newCoffeeImage);
-        makeImageDraggable(newCoffeeImage); // Make the new image draggable
-    }
-}
-
-// Function to make image draggable
-function makeImageDraggable(image) {
-    image.onmousedown = function(event) {
-        var img = this; // 'this' refers to the image that is being clicked on
-        event.preventDefault();
-
-        var shiftX = event.clientX - img.getBoundingClientRect().left;
-        var shiftY = event.clientY - img.getBoundingClientRect().top;
-
-        img.style.position = 'absolute';
-        img.style.zIndex = 1000;
-        document.body.append(img);
-
-        moveAt(event.pageX, event.pageY);
-
-        function moveAt(pageX, pageY) {
-            img.style.left = pageX - shiftX + 'px';
-            img.style.top = pageY - shiftY + 'px';
-        }
-
-        function onMouseMove(event) {
-            moveAt(event.pageX, event.pageY);
-        }
-
-        document.addEventListener('mousemove', onMouseMove);
-
-        img.onmouseup = function() {
-            document.removeEventListener('mousemove', onMouseMove);
-            img.onmouseup = null;
-        };
-
-    };
-
-    image.ondragstart = function() {
-        return false;
-    };
-}
-
-window.onload = function() {
-    var images = document.getElementsByClassName('coffee-img');
-
-    for (var i = 0; i < images.length; i++) {
-        makeImageDraggable(images[i]);
-    }
-};
-
-
-</script>
