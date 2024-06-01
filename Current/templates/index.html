@@ -165,17 +165,25 @@
                     let newLeft = pageX - shiftX;
                     let newTop = pageY - shiftY;
 
-                    // Ensure image stays within container
-                    newLeft = Math.max(newLeft, 20);
-                    newLeft = Math.min(newLeft, containerRect.width - img.offsetWidth - 20);
-                    newTop = Math.max(newTop, 20);
-                    newTop = Math.min(newTop, containerRect.height - img.offsetHeight - 20);
+                    // Ensure image stays within the container (white frame)
+                    newLeft = Math.max(newLeft, containerRect.left);
+                    newLeft = Math.min(newLeft, containerRect.right - img.offsetWidth);
+                    newTop = Math.max(newTop, containerRect.top);
+                    newTop = Math.min(newTop, containerRect.bottom - img.offsetHeight);
 
-                    img.style.left = pageX - shiftX + 'px';
-                    img.style.top = pageY - shiftY + 'px';
+                    img.style.left = newLeft + 'px';
+                    img.style.top = newTop + 'px';
                 }
 
                 function onMouseMove(event) {
+                    // Check if cursor is within container bounds
+                    if (event.pageX < containerRect.left || event.pageX > containerRect.right ||
+                        event.pageY < containerRect.top || event.pageY > containerRect.bottom) {
+                        document.removeEventListener('mousemove', onMouseMove);
+                        img.onmouseup = null;
+                        return;
+                    }
+
                     moveAt(event.pageX, event.pageY);
                     checkCollisions(img);
                 }
@@ -192,11 +200,7 @@
             image.ondragstart = function() {
                 return false;
             };
-               
 
-                image.ondragstart = function() {
-                    return false;
-                };
         }
 
         function checkCollisions(movingImg) {
