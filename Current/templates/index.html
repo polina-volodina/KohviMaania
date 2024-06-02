@@ -96,19 +96,6 @@
     </style>
 </head>
 <body>
-    <!-- Modal -->
-    <div id="rulesModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2>Game Rules</h2>
-            <p>1. Click "Click Me" to earn money.</p>
-            <p>2. Use money to buy coffee by clicking "Buy Coffee".</p>
-            <p>3. Drag and drop coffee images to merge them and create new coffee types.</p>
-            <p>4. Enjoy the game!</p>
-            <button class="button" onclick="closeModal()">OK</button>
-        </div>  
-    </div>
-    
     <div class="container" id="container">
         <button class="button" onclick="increaseMoney()" style="position: absolute; right: 10px; top: 30px;">Click Me</button>
         <button class="button" onclick="buyCoffee()" style="position: absolute; right: 10px; top: 90px;">Buy Coffee</button>
@@ -119,6 +106,7 @@
         <div id="image4Count">Coffee 4 Count: <span id="image4CountValue"></span></div>
         <div id="image5Count">Coffee 5 Count: <span id="image5CountValue"></span></div>
         <div id="additional-coffee-images"></div>
+        <div id="congratulationsMessage" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2em; color: red;"></div>
     </div>
 
     <script>
@@ -373,7 +361,7 @@
                 const currentHeight = parseInt(img1.style.height) || 200;
                 const newSize = Math.min(currentWidth * 1.5, 1000);
 
-                if (newSize < 1000) {
+                if (newSize <= 100) {
                     image5Count -= 2;
                     localStorage.setItem('image5Count', image5Count);
                     document.getElementById('image5CountValue').textContent = image5Count;
@@ -383,18 +371,52 @@
                     localStorage.setItem('image5Count', image5Count);
                     document.getElementById('image5CountValue').textContent = image5Count;
                 } else {
-                    image5Count -= 1;
-                    localStorage.setItem('image5Count', image5Count);
-                    document.getElementById('image5CountValue').textContent = image5Count;
+                    // Display "Congratulations, You won!" message
+                    document.getElementById('congratulationsMessage').textContent = "Congratulations, You won!";
 
-                    img1.style.width = newSize + 'px';
-                    img1.style.height = newSize + 'px';
+                    // Add click event listener to reset the game on click
+                    document.getElementById('congratulationsMessage').textContent = "Congratulations, You won!";
+                    document.getElementById('container').onclick = resetGameOnClick;
+
+
                 }
+
+                
             }
 
             img1.remove();
             img2.remove();
         }
+
+        // Function to reset the game
+        function resetGame() {
+            // Clear local storage
+            localStorage.clear();
+
+            // Reset coffee counts
+            document.getElementById('coffeeCountValue').textContent = 0;
+            document.getElementById('image2CountValue').textContent = 0;
+            document.getElementById('image3CountValue').textContent = 0;
+            document.getElementById('image4CountValue').textContent = 0;
+            document.getElementById('image5CountValue').textContent = 0;
+
+            // Remove all images from the image container
+                const coffeeImagesDiv = document.getElementById('additional-coffee-images');
+                coffeeImagesDiv.innerHTML = '';
+
+            // Hide the congratulations message
+            document.getElementById('congratulationsMessage').textContent = '';
+        }
+
+        // Function to reset the game on click
+        function resetGameOnClick(event) {
+            if (event.target.id !== 'container' && event.target.id !== 'congratulationsMessage') {
+                return;
+            }
+            resetGame();
+        }
+
+        
 
         function addNewImage(imageSrc, left, top, width = '200px', height = '200px') {
             const newImage = document.createElement('img');
