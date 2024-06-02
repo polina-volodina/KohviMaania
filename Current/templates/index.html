@@ -54,9 +54,61 @@
             gap: 3px;
             margin-top: 20px;
         }
+        /* Modal Styles */
+        .modal {
+            display: flex; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 1000 px;
+            text-align: center;
+        }
+        .close {
+            color: #b53030;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .button {
+        background-color: #FFC0CB; /* Change this to the desired color */
+    }
     </style>
 </head>
 <body>
+    <!-- Modal -->
+    <div id="rulesModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Game Rules</h2>
+            <p>1. Click "Click Me" to earn money.</p>
+            <p>2. Use money to buy coffee by clicking "Buy Coffee".</p>
+            <p>3. Drag and drop coffee images to merge them and create new coffee types.</p>
+            <p>4. Enjoy the game!</p>
+            <button class="button" onclick="closeModal()">OK</button>
+        </div>  
+    </div>
+    
     <div class="container" id="container">
         <button class="button" onclick="increaseMoney()" style="position: absolute; right: 10px; top: 30px;">Click Me</button>
         <button class="button" onclick="buyCoffee()" style="position: absolute; right: 10px; top: 90px;">Buy Coffee</button>
@@ -70,6 +122,55 @@
     </div>
 
     <script>
+        // Modal script
+        function closeModal() {
+            document.getElementById('rulesModal').style.display = "none";
+        }
+
+        window.onload = function() {
+            document.getElementById('rulesModal').style.display = "flex";
+            
+            const coffeeImagesDiv = document.getElementById('additional-coffee-images');
+            for (let i = 0; i < coffeeCount; i++) {
+                const coffeeImage = document.createElement('img');
+                coffeeImage.src = "images/coffee.jpg";
+                coffeeImage.className = 'coffee-img';
+                coffeeImagesDiv.appendChild(coffeeImage);
+                makeImageDraggable(coffeeImage);
+            }
+
+            for (let i = 0; i < image2Count; i++) {
+                const coffee2Image = document.createElement('img');
+                coffee2Image.src = "images/coffee2.jpg";
+                coffee2Image.className = 'coffee-img';
+                coffeeImagesDiv.appendChild(coffee2Image);
+                makeImageDraggable(coffee2Image);
+            }
+
+            for (let i = 0; i < image3Count; i++) {
+                const coffee3Image = document.createElement('img');
+                coffee3Image.src = "images/coffee3.jpg";
+                coffee3Image.className = 'coffee-img';
+                coffeeImagesDiv.appendChild(coffee3Image);
+                makeImageDraggable(coffee3Image);
+            }
+
+            for (let i = 0; i < image4Count; i++) {
+                const coffee4Image = document.createElement('img');
+                coffee4Image.src = "images/coffee4.jpg";
+                coffee4Image.className = 'coffee-img';
+                coffeeImagesDiv.appendChild(coffee4Image);
+                makeImageDraggable(coffee4Image);
+            }
+
+            for (let i = 0; i < image5Count; i++) {
+                const coffee5Image = document.createElement('img');
+                coffee5Image.src = "images/coffee5.jpg";
+                coffee5Image.className = 'coffee-img';
+                coffeeImagesDiv.appendChild(coffee5Image);
+                makeImageDraggable(coffee5Image);
+            }
+        };
         
         let money = localStorage.getItem('money');
         let coffeeCount = localStorage.getItem('coffeeCount') || 0;
@@ -132,6 +233,7 @@
 
                 coffeeCount++;
                 localStorage.setItem('coffeeCount', coffeeCount);
+                document.getElementById('moneyValue').textContent = money;
                 document.getElementById('coffeeCountValue').textContent = coffeeCount;
 
                 const coffeeImagesDiv = document.getElementById('additional-coffee-images');
