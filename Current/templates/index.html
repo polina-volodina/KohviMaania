@@ -44,6 +44,29 @@
         .button:active {
             background-color: #ffd5dc; /* Color when button is clicked */
         }
+        #coffeeCount, #image2Count, #image3Count, #image4Count, #image5Count {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px;
+            margin-top: 5px;
+        }
+        #coffeeCount {
+            left: 10px;
+        }
+        #image2Count {
+            left: 210px;
+        }
+        #image3Count {
+            left: 410px;
+        }
+        #image4Count {
+            left: 610px;
+        }
+        #image5Count {
+            left: 810px;
+        }
         #money {
             position: absolute;
             top: 10px;
@@ -111,7 +134,7 @@
         <button class="button" onclick="increaseMoney()" style="position: absolute; right: 10px; top: 30px;">Click Me</button>
         <button class="button" onclick="buyCoffee()" style="position: absolute; right: 10px; top: 90px;">Buy Coffee</button>
         <div id="money">Money: <span id="moneyValue">{{ money }}</span></div>
-        <div id="coffeeCount">Coffee Count: <span id="coffeeCountValue"></span></div>
+        <div id="coffeeCount">Coffee 1 Count: <span id="coffeeCountValue"></span></div>
         <div id="image2Count">Coffee 2 Count: <span id="image2CountValue"></span></div>
         <div id="image3Count">Coffee 3 Count: <span id="image3CountValue"></span></div>
         <div id="image4Count">Coffee 4 Count: <span id="image4CountValue"></span></div>
@@ -372,7 +395,7 @@
                 const currentHeight = parseInt(img1.style.height) || 200;
                 const newSize = Math.min(currentWidth * 1.5, 1000);
 
-                if (newSize <= 100) {
+                if (newSize <= 300) {
                     image5Count -= 2;
                     localStorage.setItem('image5Count', image5Count);
                     document.getElementById('image5CountValue').textContent = image5Count;
