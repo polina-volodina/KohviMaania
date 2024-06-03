@@ -116,7 +116,7 @@
         <div id="image4Count">Coffee 4 Count: <span id="image4CountValue"></span></div>
         <div id="image5Count">Coffee 5 Count: <span id="image5CountValue"></span></div>
         <div id="additional-coffee-images"></div>
-        <div id="congratulationsMessage" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2em; color: red;"></div>
+        <div id="congratulationsMessage" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 4.1em; color: rgb(0, 0, 0); background-color: hsl(80, 100%, 82%);"></div>
     </div>
 
     <script>
@@ -381,7 +381,7 @@
                     localStorage.setItem('image5Count', image5Count);
                     document.getElementById('image5CountValue').textContent = image5Count;
                 } else {
-                    // Display "Congratulations, You won!" message
+                    // Display " Congratulations, You won! " message
                     document.getElementById('congratulationsMessage').textContent = "Congratulations, You won!";
 
                     // Add click event listener to reset the game on click
