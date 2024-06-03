@@ -44,6 +44,14 @@
         .button:active {
             background-color: #ffd5dc; /* Color when button is clicked */
         }
+        #level {
+            position: absolute;
+            top: 10px;
+            left: 1020px;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px;
+            margin-top: 5px;
+        }
         #coffeeCount, #image2Count, #image3Count, #image4Count, #image5Count {
             position: absolute;
             top: 10px;
@@ -53,19 +61,19 @@
             margin-top: 5px;
         }
         #coffeeCount {
-            left: 10px;
+            left: 20px;
         }
         #image2Count {
-            left: 210px;
+            left: 220px;
         }
         #image3Count {
-            left: 410px;
+            left: 420px;
         }
         #image4Count {
-            left: 610px;
+            left: 620px;
         }
         #image5Count {
-            left: 810px;
+            left: 820px;
         }
         #money {
             position: absolute;
@@ -133,12 +141,13 @@
     <div class="container" id="container">
         <button class="button" onclick="increaseMoney()" style="position: absolute; right: 10px; top: 30px;">Click Me</button>
         <button class="button" onclick="buyCoffee()" style="position: absolute; right: 10px; top: 90px;">Buy Coffee</button>
-        <div id="money">Money: <span id="moneyValue">{{ money }}</span></div>
+        <div id="money" style="background-color: rgba(255, 255, 255, 0.7);">Money: <span id="moneyValue">{{ money }}</span></div>
         <div id="coffeeCount">Coffee 1 Count: <span id="coffeeCountValue"></span></div>
         <div id="image2Count">Coffee 2 Count: <span id="image2CountValue"></span></div>
         <div id="image3Count">Coffee 3 Count: <span id="image3CountValue"></span></div>
         <div id="image4Count">Coffee 4 Count: <span id="image4CountValue"></span></div>
         <div id="image5Count">Coffee 5 Count: <span id="image5CountValue"></span></div>
+        <div id="level">Level: <span id="levelValue"></span></div>
         <div id="additional-coffee-images"></div>
         <div id="congratulationsMessage" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 4.1em; color: rgb(0, 0, 0); background-color: hsl(80, 100%, 82%);"></div>
     </div>
@@ -192,6 +201,15 @@
                 coffeeImagesDiv.appendChild(coffee5Image);
                 makeImageDraggable(coffee5Image);
             }
+
+            document.getElementById('moneyValue').textContent = money;
+            document.getElementById('coffeeCountValue').textContent = coffeeCount;
+            document.getElementById('image2CountValue').textContent = image2Count;
+            document.getElementById('image3CountValue').textContent = image3Count;
+            document.getElementById('image4CountValue').textContent = image4Count;
+            document.getElementById('image5CountValue').textContent = image5Count;
+            document.getElementById('levelValue').textContent = level;
+
         };
         
         let money = localStorage.getItem('money');
@@ -200,7 +218,15 @@
         let image3Count = localStorage.getItem('image3Count') || 0;
         let image4Count = localStorage.getItem('image4Count') || 0;
         let image5Count = localStorage.getItem('image5Count') || 0;
-
+        let level = localStorage.getItem('level') || 1;
+        
+        
+        
+        if (level === null || isNaN(level)) {
+            level = 0;
+        } else {
+            level = parseInt(level);
+        }
         if (money === null || isNaN(money)) {
             money = 0;
         } else {
@@ -231,13 +257,12 @@
         } else {
             image5Count = parseInt(image5Count);
         }
+        
+    
+        function updateLevelDisplay() {
+            document.getElementById('levelValue').textContent = level;
+        }
 
-        document.getElementById('moneyValue').textContent = money;
-        document.getElementById('coffeeCountValue').textContent = coffeeCount;
-        document.getElementById('image2CountValue').textContent = image2Count;
-        document.getElementById('image3CountValue').textContent = image3Count;
-        document.getElementById('image4CountValue').textContent = image4Count;
-        document.getElementById('image5CountValue').textContent = image5Count;
 
         function increaseMoney() {
             money += 10000;
@@ -408,6 +433,10 @@
                     // Display " Congratulations, You won! " message
                     document.getElementById('congratulationsMessage').textContent = "Congratulations, You won!";
 
+                    level++;
+                    localStorage.setItem('level', level);
+                    updateLevelDisplay();
+
                     // Add click event listener to reset the game on click
                     document.getElementById('congratulationsMessage').textContent = "Congratulations, You won!";
                     document.getElementById('container').onclick = resetGameOnClick;
@@ -437,8 +466,9 @@
             document.getElementById('image5CountValue').textContent = 0;
 
             // Remove all images from the image container
-                const coffeeImagesDiv = document.getElementById('additional-coffee-images');
-                coffeeImagesDiv.innerHTML = '';
+            const coffeeImagesDiv = document.getElementById('additional-coffee-images');
+            coffeeImagesDiv.innerHTML = '';
+
 
             // Hide the congratulations message
             document.getElementById('congratulationsMessage').textContent = '';
@@ -446,9 +476,6 @@
 
         // Function to reset the game on click
         function resetGameOnClick(event) {
-            if (event.target.id !== 'container' && event.target.id !== 'congratulationsMessage') {
-                return;
-            }
             resetGame();
         }
 
